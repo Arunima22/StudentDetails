@@ -1,0 +1,49 @@
+<!DOCTYPE = html>
+<html>
+<title>  Student Data </title>
+<style>
+table {
+border:1px solid black;
+border-collapse: none;
+
+}
+thead, td {
+border: 1px solid black;
+padding: 8px;
+}
+c1 td:first-child {
+text-align: center;
+font-weight: bold;
+border-right: none;
+}
+c1 td:last-child{
+
+}
+</style>
+
+<body>
+<h1> Student Details </h1>
+	<table>
+		<thead>
+		<tr>
+			<td><strong> Student id </strong></td>
+			<td><strong>  Course id </strong></td>
+			<td><strong>  Marks </strong></td> 
+		</tr>
+		</thead>
+		<tbody>
+			{% for data in final %}
+			<tr>
+				<td> {{ data["Student id"] }} </td>
+				<td> {{ data["Course id"] }} </td>
+				<td> {{ data["Marks"] }} </td>
+			</tr>
+			{% endfor %}
+			<tr>
+				<td  colspan=2; style= "border-left: none; text-align: center;"> Total Marks </td>
+				<td  class="c1" >{{ Total_Marks }}</td>
+			</tr>
+		</tbody>
+	</table>
+</body>
+</html>
