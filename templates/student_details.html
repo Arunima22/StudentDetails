@@ -1,4 +1,4 @@
-<!DOCTYPE = html>
+<!DOCTYPE html>
 <html>
 <title>  Student Data </title>
 <style>
@@ -20,10 +20,9 @@ c1 td:last-child{
 
 }
 </style>
-
 <body>
 <h1> Student Details </h1>
-	<table>
+	<table border = "2" id = "student-details-table">
 		<thead>
 		<tr>
 			<td><strong> Student id </strong></td>
@@ -38,12 +37,13 @@ c1 td:last-child{
 				<td> {{ data["Course id"] }} </td>
 				<td> {{ data["Marks"] }} </td>
 			</tr>
-			{% endfor %}
+			{% endfor %}				
 			<tr>
-				<td  colspan=2; style= "border-left: none; text-align: center;"> Total Marks </td>
-				<td  class="c1" >{{ Total_Marks }}</td>
+				<td  colspan= "2" style= "border-left: none; text-align: center;"> Total Marks </td>
+				<td  class="c1" >{{Total_Marks}}</td>
 			</tr>
 		</tbody>
 	</table>
+	<a href="/">Go back</a>
 </body>
 </html>

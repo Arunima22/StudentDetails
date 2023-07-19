@@ -1,15 +1,21 @@
 from jinja2 import Template
 import csv
+import os
+import matplotlib 
+import matplotlib
+matplotlib.use("TKAgg")
 from matplotlib import pyplot as plt
 import numpy as np
-import pyhtml as h
+from flask import Flask
+from flask import render_template
+from flask import request
+
 
 
 #getting data
-
 dicheads = ["Student id", "Course id", "Marks"]
 datalist = []
-file = open('data.csv', mode = 'r')
+file = open('static/data.csv', mode = 'r')
 content = file.read().split("\n")
 line_count = 0
 for each in content:
@@ -26,80 +32,72 @@ for each in content:
 file.close()
 
 
-#rendering HTML CODE
 
-def render_html(content):
-    output_file = open('output.html', 'w')
-    output_file.write(content)
-    output_file.close()
+#building an app
+app = Flask(__name__)
 
-
-#constructing default HTML CODE
-
-def default_html():
-    t = h.html(
-        h.head(
-            h.title('Something went wrong')),
-        h.body(
-            h.h1('Wrong Inputs'),
-            h.p('Something went wrong'))
-        )
-    outputcontent = t.render()
-    return str(outputcontent)
-
-#constructing main HTML CODE
+@app.route("/", methods = ["GET", "POST"])
 
 def main():
-    p1 = input("Course or Student?")
-    final = []
-    Total_Marks = 0
-    htmlcode = default_html()
+    if request.method == "GET":
+        return render_template('main.html')
+    if request.method == "POST":
+        c1 = request.form["ID"]
+        c2 = request.form["id_value"]
+        
 
-    #Case 1 of choosing Student
-    
-    if p1 == '-s':
-        studentid = int(input("Enter the student id: "))
-        for each in datalist:
-            if each["Student id"] == studentid:
-                final.append(each)
-                Total_Marks = Total_Marks + int(each["Marks"])
-        if final: 
-            file3 = open('studeets.html.jinja2', mode = 'r')
-            t1 = file3.read()
-            file3.close()
-            obj1 = Template(t1)
-            htmlcode = obj1.render(final = final, Total_Marks = Total_Marks)
+        #if user selects student id
+        if c1 == "student_id":
+            final = []
+            Total_Marks = 0
+            for each in datalist:
+                if each["Student id"] == int(c2):
+                    final.append(each)
+                    Total_Marks = Total_Marks + int(each["Marks"])
+            if final: 
+                return render_template('student_details.html', final = final, Total_Marks = Total_Marks)
+            else:
+                return render_template('default.html')
 
-    #Case 2 of choosing Course
-            
-    elif p1 == '-c':
-        courseid = int(input("Enter the course id: "))
-        for each in datalist:
-            if each["Course id"] == courseid:
-                final.append(each["Marks"])
-                Total_Marks = Total_Marks + each["Marks"]
-        if final: 
-            Average_Marks = Total_Marks/len(final)
-            Maximum_Marks = max(final)
-            plt.hist(np.array(final))
-            plt.xlabel("Marks")
-            plt.ylabel("Frequency")
-            plt.savefig('my_plot.png')
-            plt.close()
+        #if user selects course id
+        elif c1 == "course_id":
+            final = []
+            Total_Marks = 0
+            for each in datalist:
+                if each["Course id"] == int(c2):
+                    final.append(each["Marks"])
+                    Total_Marks = Total_Marks + each["Marks"]
+            if final: 
+                Average_Marks = Total_Marks/len(final)
+                Maximum_Marks = max(final)
 
-            # reading the template
-            file4 = open('cdeets.html.jinja2', mode = 'r')
-            t2 = file4.read()
-            file4.close()
+                static_folder = 'static'
+                save_path = os.path.join(static_folder,'my_plot.png')
 
-            # constructing th HT=ML code
-            obj2 = Template(t2)
-            htmlcode = obj2.render(Average_Marks = Average_Marks, Maximum_Marks = Maximum_Marks)
+                plt.hist(np.array(final))
+                plt.xlabel("Marks")
+                plt.ylabel("Frequency")
+                plt.savefig(save_path)
+                plt.close()
 
-    render_html(htmlcode)
+                return render_template('course_details.html', Average_Marks = Average_Marks, Maximum_Marks = Maximum_Marks)
+            else:
+                return render_template('default.html')
+
+        #if something goes wrong
+        else:
+            return render_template('default.html')
 
 if __name__ == "__main__":
     main()
+
+
+
+
+    
+
+
+
     
     
 
